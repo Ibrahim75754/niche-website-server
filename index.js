@@ -24,20 +24,52 @@ async function run() {
         const productsCollection = database.collection('products');
         const ordersCollection = database.collection('orders');
         const usersCollection = database.collection('users');
+
         //.................product...............................
-        //get all products
+        // insert one product...............
+        app.post('/products', async (req, res) => {
+            const product = req.body;
+            const result = await productsCollection.insertOne(product);
+            res.json(result);
+        });
+        //get all products..............
         app.get('/products', async (req, res) => {
             const cursor = productsCollection.find({});
             const result = await cursor.toArray();
             res.json(result);
         });
-
-        //get one product
+        //get one product...............
         app.get('/products/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const product = await productsCollection.findOne(query);
             res.json(product);
+        });
+        //update product.................
+        app.put('/products/update/:id', async (req, res) => {
+            const id = req.params.id;
+            const updatePackage = req.body;
+            console.log(updatePackage);
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    img: updatePackage.img,
+                    name: updatePackage.name,
+                    description: updatePackage.description,
+                    price: updatePackage.price,
+                    duration: updatePackage.duration,
+                },
+            };
+            const result = await productsCollection.updateOne(filter, updateDoc, options);
+            res.json(result);
+        });
+        //delete one Product..............
+        app.delete('/products/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await productsCollection.deleteOne(query);
+            res.json(result);
         });
 
         //.................Order....................................
@@ -46,6 +78,27 @@ async function run() {
             const order = req.body;
             console.log('hit the post api', order);
             const result = await ordersCollection.insertOne(order);
+            res.json(result);
+        });
+        //get All Orders...............
+        app.get('/orders', async (req, res) => {
+            const cursor = ordersCollection.find({});
+            const result = await cursor.toArray();
+            res.json(result);
+        });
+        //get All Orders of an user...............
+        app.get('/orders/:email', async (req, res) => {
+            const user = req.params;
+            const query = { email: user.email }
+            const cursor = ordersCollection.find(query);
+            const result = await cursor.toArray();
+            res.json(result);
+        });
+        //delete one order..............
+        app.delete('/orders/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await ordersCollection.deleteOne(query);
             res.json(result);
         });
 
@@ -88,70 +141,6 @@ async function run() {
         });
 
 
-
-
-
-
-
-
-
-        // service.......... insert
-        app.post('/appointments', async (req, res) => {
-            const appointment = req.body;
-            // console.log('hit the post api', service);
-            const result = await appointmentsCollection.insertOne(appointment);
-            res.json(result);
-        });
-        //show All where email==email & date==date
-        app.get('/appointments', async (req, res) => {
-            const email = req.query.email;
-            const date = new Date(req.query.date).toLocaleDateString();
-            const query = { email: email, date: date };
-            const cursor = appointmentsCollection.find(query);
-            const result = await cursor.toArray();
-            res.json(result);
-        });
-
-
-
-
-
-
-        /* 
-        //update package........... update one
-        app.put('/packages/update/:id', async (req, res) => {
-            const id = req.params.id;
-            const updatePackage = req.body;
-            console.log(updatePackage);
-            const filter = { _id: ObjectId(id) };
-            const options = { upsert: true };
-            const updateDoc = {
-                $set: {
-                    img: updatePackage.img,
-                    name: updatePackage.name,
-                    description: updatePackage.description,
-                    price: updatePackage.price,
-                    duration: updatePackage.duration,
-                },
-            };
-            const result = await packagesCollection.updateOne(filter, updateDoc, options);
-            res.json(result);
-        });
-        //delete from package............ delete one
-        app.delete('/packages/:id', async (req, res) => {
-            const id = req.params.id;
-            const query = { _id: ObjectId(id) };
-            const result = await packagesCollection.deleteOne(query);
-            res.json(result);
-        });
-
-        //delete from Orders
-        app.delete('/myOrders/:id', async (req, res) => {
-            const id = req.params.id;
-            const query = { _id: ObjectId(id) };
-            const result = await ordersCollection.deleteOne(query);
-            res.json(result);
-        }); */
 
 
 
