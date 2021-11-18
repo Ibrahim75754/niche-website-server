@@ -87,6 +87,13 @@ async function run() {
             const result = await cursor.toArray();
             res.json(result);
         });
+        //get one orders...............
+        app.get('/orders/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await ordersCollection.findOne(query);
+            res.json(result);
+        });
         //get All Orders of an user...............
         app.get('/orders/:email', async (req, res) => {
             const user = req.params;
