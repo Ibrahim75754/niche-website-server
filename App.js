@@ -20,7 +20,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run() {
     try {
         await client.connect();
-        console.log("database connected");
+        console.log("connect");
         const database = client.db('shaving-foam');
         const productsCollection = database.collection('products');
         const ordersCollection = database.collection('orders');
@@ -93,19 +93,6 @@ async function run() {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const result = await ordersCollection.findOne(query);
-            res.json(result);
-        });
-        //update one orders...............
-        app.put('/orders/:id', async (req, res) => {
-            const id = req.params.id;
-            const payment = req.body;
-            const query = { _id: ObjectId(id) };
-            const updateDoc = {
-                $set: {
-                    payment: payment
-                }
-            }
-            const result = await ordersCollection.updateOne(query, updateDoc);
             res.json(result);
         });
         //get All Orders of an user...............
@@ -188,7 +175,7 @@ async function run() {
                 payment_method_types: ['card']
             });
             res.json({ clientSecret: paymentIntent.client_secret })
-        });
+        })
 
     }
     finally {
