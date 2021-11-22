@@ -56,7 +56,6 @@ async function run() {
         app.put('/products/update/:id', async (req, res) => {
             const id = req.params.id;
             const updatePackage = req.body;
-            console.log(updatePackage);
             const filter = { _id: ObjectId(id) };
             const options = { upsert: true };
             const updateDoc = {
@@ -83,7 +82,6 @@ async function run() {
         //insert one order  (placeOrder)
         app.post('/placeOrder', async (req, res) => {
             const order = req.body;
-            console.log('hit the post api', order);
             const result = await ordersCollection.insertOne(order);
             res.json(result);
         });
@@ -94,7 +92,7 @@ async function run() {
             res.json(result);
         });
         //get one orders...............
-        app.get('/order/:id', async (req, res) => {
+        app.get('/orders/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const result = await ordersCollection.findOne(query);
@@ -114,7 +112,7 @@ async function run() {
             res.json(result);
         });
         //get All Orders of an user...............
-        app.get('/orders/:email', async (req, res) => {
+        app.get('/myOrders/:email', async (req, res) => {
             const user = req.params;
             const query = { email: user.email };
             const cursor = ordersCollection.find(query);
@@ -166,11 +164,9 @@ async function run() {
         //user make admin..................
         app.put('/users/admin', async (req, res) => {
             const user = req.body;
-            console.log(user);
             const query = { email: user.email };
             const updateDoc = { $set: { role: 'admin' } };
             const result = await usersCollection.updateOne(query, updateDoc);
-            console.log(result);
             res.json(result);
         });
         //check admin retrun bool value
